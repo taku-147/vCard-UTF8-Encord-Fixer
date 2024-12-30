@@ -1,9 +1,9 @@
 import os
 import quopri
 import sys
+import re
 
-#v0.1.0
-#動くかどうか知らないけど僕のやつは動いた
+
 
 # QUOTED-PRINTABLE形式のデコード関数
 def decode_quoted_printable(text):
@@ -40,11 +40,13 @@ def fix_vcard_file(input_path):
                 fixed_lines.append(temp_line)
             temp_line = ""
 
+    # EMAIL;OTHER: の置き換え
+    fixed_lines = [re.sub(r"EMAIL;([^:]+):", r"EMAIL;TYPE=\1;TYPE=pref;TYPE=INTERNET:", line) for line in fixed_lines]
+
     with open(output_path, 'w', encoding='utf-8') as output_file:
         output_file.writelines("\n".join(fixed_lines) + "\n")
 
     print(f"修正済みのvCardファイルが保存されました: {output_path}")
-
 
 # 実行
 if __name__ == "__main__":
